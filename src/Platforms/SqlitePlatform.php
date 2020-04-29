@@ -319,9 +319,9 @@ class SqlitePlatform extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    protected function _getCreateTableSQL($name, array $columns, array $options = [])
+    protected function _getCreateTableSQL($tableName, array $columns, array $options = [])
     {
-        $name        = str_replace('.', '__', $name);
+        $tableName   = str_replace('.', '__', $tableName);
         $queryFields = $this->getColumnDeclarationListSQL($columns);
 
         if (isset($options['uniqueConstraints']) && ! empty($options['uniqueConstraints'])) {
@@ -345,7 +345,7 @@ class SqlitePlatform extends AbstractPlatform
             $tableComment = $this->getInlineTableCommentSQL($comment);
         }
 
-        $query = ['CREATE TABLE ' . $name . ' ' . $tableComment . '(' . $queryFields . ')'];
+        $query = ['CREATE TABLE ' . $tableName . ' ' . $tableComment . '(' . $queryFields . ')'];
 
         if (isset($options['alter']) && $options['alter'] === true) {
             return $query;
@@ -353,13 +353,13 @@ class SqlitePlatform extends AbstractPlatform
 
         if (isset($options['indexes']) && ! empty($options['indexes'])) {
             foreach ($options['indexes'] as $indexDef) {
-                $query[] = $this->getCreateIndexSQL($indexDef, $name);
+                $query[] = $this->getCreateIndexSQL($indexDef, $tableName);
             }
         }
 
         if (isset($options['unique']) && ! empty($options['unique'])) {
             foreach ($options['unique'] as $indexDef) {
-                $query[] = $this->getCreateIndexSQL($indexDef, $name);
+                $query[] = $this->getCreateIndexSQL($indexDef, $tableName);
             }
         }
 
@@ -394,7 +394,8 @@ class SqlitePlatform extends AbstractPlatform
      */
     protected function getVarcharTypeDeclarationSQLSnippet($length, $fixed)
     {
-        return $fixed ? ($length > 0 ? 'CHAR(' . $length . ')' : 'CHAR(255)')
+        return $fixed
+            ? ($length > 0 ? 'CHAR(' . $length . ')' : 'CHAR(255)')
             : ($length > 0 ? 'VARCHAR(' . $length . ')' : 'TEXT');
     }
 
@@ -924,7 +925,7 @@ class SqlitePlatform extends AbstractPlatform
         if (! $this->onSchemaAlterTable($diff, $tableSql)) {
             $dataTable = new Table('__temp__' . $table->getName());
 
-            $newTable = new Table($table->getQuotedName($this), $columns, $this->getPrimaryIndexInAlteredTable($diff), $this->getForeignKeysInAlteredTable($diff), 0, $table->getOptions());
+            $newTable = new Table($table->getQuotedName($this), $columns, $this->getPrimaryIndexInAlteredTable($diff), [], $this->getForeignKeysInAlteredTable($diff), $table->getOptions());
             $newTable->addOption('alter', true);
 
             $sql = $this->getPreAlterTableIndexForeignKeySQL($diff);

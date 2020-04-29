@@ -19,6 +19,7 @@ use function assert;
 use function chmod;
 use function exec;
 use function file_exists;
+use function in_array;
 use function posix_geteuid;
 use function posix_getpwuid;
 use function sprintf;
@@ -300,7 +301,7 @@ class ExceptionTest extends FunctionalTestCase
         }
 
         // mode 0 is considered read-only on Windows
-        $mode = PHP_OS === 'Linux' ? 0444 : 0000;
+        $mode = in_array(PHP_OS, ['Linux', 'Darwin']) ? 0444 : 0000;
 
         $filename = sprintf('%s/%s', sys_get_temp_dir(), 'doctrine_failed_connection_' . $mode . '.db');
 

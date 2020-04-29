@@ -26,7 +26,7 @@ class TableTest extends TestCase
 
     public function testGetName() : void
     {
-        $table =  new Table('foo', [], [], []);
+        $table =  new Table('foo', [], [], [], []);
         self::assertEquals('foo', $table->getName());
     }
 
@@ -166,7 +166,7 @@ class TableTest extends TestCase
     {
         $this->expectException(SchemaException::class);
 
-        $table = new Table('foo', [], [], []);
+        $table = new Table('foo', [], [], [], []);
         $table->getIndex('unknownIndex');
     }
 
@@ -180,7 +180,7 @@ class TableTest extends TestCase
             new Index('the_primary', ['foo'], true, true),
             new Index('other_primary', ['bar'], true, true),
         ];
-        $table   = new Table('foo', $columns, $indexes, []);
+        $table   = new Table('foo', $columns, $indexes, [], []);
     }
 
     public function testAddTwoIndexesWithSameNameThrowsException() : void
@@ -193,14 +193,14 @@ class TableTest extends TestCase
             new Index('an_idx', ['foo'], false, false),
             new Index('an_idx', ['bar'], false, false),
         ];
-        $table   = new Table('foo', $columns, $indexes, []);
+        $table   = new Table('foo', $columns, $indexes, [], []);
     }
 
     public function testConstraints() : void
     {
         $constraint = new ForeignKeyConstraint([], 'foo', []);
 
-        $tableA      = new Table('foo', [], [], [$constraint]);
+        $tableA      = new Table('foo', [], [], [], [$constraint]);
         $constraints = $tableA->getForeignKeys();
 
         self::assertCount(1, $constraints);
@@ -209,7 +209,7 @@ class TableTest extends TestCase
 
     public function testOptions() : void
     {
-        $table = new Table('foo', [], [], [], false, ['foo' => 'bar']);
+        $table = new Table('foo', [], [], [], [], ['foo' => 'bar']);
 
         self::assertTrue($table->hasOption('foo'));
         self::assertEquals('bar', $table->getOption('foo'));

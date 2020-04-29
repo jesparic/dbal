@@ -423,15 +423,15 @@ SQL
         $queryFields = $this->getColumnDeclarationListSQL($columns);
 
         if (isset($options['uniqueConstraints']) && ! empty($options['uniqueConstraints'])) {
-            foreach ($options['uniqueConstraints'] as $index => $definition) {
-                $queryFields .= ', ' . $this->getUniqueConstraintDeclarationSQL($index, $definition);
+            foreach ($options['uniqueConstraints'] as $name => $definition) {
+                $queryFields .= ', ' . $this->getUniqueConstraintDeclarationSQL($name, $definition);
             }
         }
 
         // add all indexes
         if (isset($options['indexes']) && ! empty($options['indexes'])) {
-            foreach ($options['indexes'] as $index => $definition) {
-                $queryFields .= ', ' . $this->getIndexDeclarationSQL($index, $definition);
+            foreach ($options['indexes'] as $name => $definition) {
+                $queryFields .= ', ' . $this->getIndexDeclarationSQL($name, $definition);
             }
         }
 
@@ -761,9 +761,7 @@ SQL
                 continue;
             }
 
-            foreach ($diff->fromTable->getPrimaryKeyColumns() as $columnName) {
-                $column = $diff->fromTable->getColumn($columnName);
-
+            foreach ($diff->fromTable->getPrimaryKeyColumns() as $columnName => $column) {
                 // Check if an autoincrement column was dropped from the primary key.
                 if (! $column->getAutoincrement() || in_array($columnName, $changedIndex->getColumns(), true)) {
                     continue;

@@ -10,7 +10,6 @@ use function array_map;
 use function array_search;
 use function array_shift;
 use function count;
-use function is_string;
 use function strtolower;
 
 class Index extends AbstractAsset implements Constraint
@@ -58,6 +57,7 @@ class Index extends AbstractAsset implements Constraint
         $isUnique = $isUnique || $isPrimary;
 
         $this->_setName($indexName);
+
         $this->_isUnique  = $isUnique;
         $this->_isPrimary = $isPrimary;
         $this->options    = $options;
@@ -65,24 +65,19 @@ class Index extends AbstractAsset implements Constraint
         foreach ($columns as $column) {
             $this->_addColumn($column);
         }
+
         foreach ($flags as $flag) {
             $this->addFlag($flag);
         }
     }
 
     /**
-     * @param string $column
-     *
      * @return void
      *
      * @throws InvalidArgumentException
      */
-    protected function _addColumn($column)
+    protected function _addColumn(string $column)
     {
-        if (! is_string($column)) {
-            throw new InvalidArgumentException('Expecting a string as Index Column');
-        }
-
         $this->_columns[$column] = new Identifier($column);
     }
 
