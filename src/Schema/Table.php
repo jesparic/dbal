@@ -529,7 +529,7 @@ class Table extends AbstractAsset
     {
         $constraintName = $this->normalizeIdentifier($constraintName);
 
-        if (! $this->hasForeignKey($constraintName)) {
+        if (! $this->hasUniqueConstraint($constraintName)) {
             throw SchemaException::uniqueConstraintDoesNotExist($constraintName, $this->_name);
         }
 
@@ -1010,7 +1010,7 @@ class Table extends AbstractAsset
      *
      * @return string The normalized identifier.
      */
-    private function normalizeIdentifier(?string $identifier)
+    private function normalizeIdentifier(?string $identifier) : string
     {
         if ($identifier === null) {
             return '';
@@ -1026,7 +1026,7 @@ class Table extends AbstractAsset
      *
      * @return Column[]
      */
-    private function filterColumns(array $columnNames, bool $reverse = false)
+    private function filterColumns(array $columnNames, bool $reverse = false) : array
     {
         return array_filter($this->_columns, static function ($columnName) use ($columnNames, $reverse) : bool {
             return in_array($columnName, $columnNames, true) !== $reverse;

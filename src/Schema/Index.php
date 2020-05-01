@@ -76,7 +76,7 @@ class Index extends AbstractAsset implements Constraint
      *
      * @throws InvalidArgumentException
      */
-    protected function _addColumn(string $column)
+    protected function _addColumn(string $column) : void
     {
         $this->_columns[$column] = new Identifier($column);
     }
