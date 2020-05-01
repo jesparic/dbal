@@ -824,4 +824,9 @@ class SqlitePlatformTest extends AbstractPlatformTestCase
             'Column "no_collation" will use the default collation (BINARY) and "column_collation" overwrites the collation on this column'
         );
     }
+
+    public function testGetSequencePrefixWithSchema() : void
+    {
+        self::assertEquals("bar__foo", $this->platform->getSequencePrefix("foo", "bar"));
+    }
 }

@@ -823,6 +823,16 @@ abstract class AbstractPlatformTestCase extends TestCase
         self::assertFalse($this->platform->usesSequenceEmulatedIdentityColumns());
     }
 
+    public function testGetSequencePrefixWithoutSchema() : void
+    {
+        self::assertEquals("foo", $this->platform->getSequencePrefix("foo"));
+    }
+
+    public function testGetSequencePrefixWithSchema() : void
+    {
+        self::assertEquals("bar.foo", $this->platform->getSequencePrefix("foo", "bar"));
+    }
+
     /**
      * @group DBAL-563
      */

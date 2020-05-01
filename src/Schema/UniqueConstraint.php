@@ -48,7 +48,7 @@ class UniqueConstraint extends AbstractAsset implements Constraint
         $this->options = $options;
 
         foreach ($columns as $column) {
-            $this->_addColumn($column);
+            $this->addColumn($column);
         }
 
         foreach ($flags as $flag) {
@@ -167,7 +167,7 @@ class UniqueConstraint extends AbstractAsset implements Constraint
     /**
      * @return void
      */
-    protected function _addColumn(string $column)
+    protected function addColumn(string $column) : void
     {
         $this->columns[$column] = new Identifier($column);
     }
