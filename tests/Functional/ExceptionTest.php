@@ -13,7 +13,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Tests\FunctionalTestCase;
 use Throwable;
-use const PHP_OS;
 use function array_merge;
 use function assert;
 use function chmod;
@@ -27,6 +26,7 @@ use function sys_get_temp_dir;
 use function touch;
 use function unlink;
 use function version_compare;
+use const PHP_OS;
 
 class ExceptionTest extends FunctionalTestCase
 {
@@ -77,8 +77,8 @@ class ExceptionTest extends FunctionalTestCase
 
     public function testForeignKeyConstraintViolationExceptionOnInsert() : void
     {
-        if (! $this->connection->getDatabasePlatform()->supportsForeignKeyConstraints()) {
-            $this->markTestSkipped('Only fails on platforms with foreign key constraints.');
+        if ($this->connection->getDatabasePlatform()->getName() === 'sqlite') {
+            $this->connection->exec('PRAGMA foreign_keys=ON');
         }
 
         $this->setUpForeignKeyConstraintViolationExceptionTest();

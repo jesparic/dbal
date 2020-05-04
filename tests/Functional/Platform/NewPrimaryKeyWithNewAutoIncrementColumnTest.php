@@ -10,9 +10,6 @@ use function count;
 
 final class NewPrimaryKeyWithNewAutoIncrementColumnTest extends FunctionalTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp() : void
     {
         parent::setUp();

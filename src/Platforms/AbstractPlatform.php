@@ -29,7 +29,6 @@ use Doctrine\DBAL\Types;
 use Doctrine\DBAL\Types\Type;
 use InvalidArgumentException;
 use UnexpectedValueException;
-use const E_USER_DEPRECATED;
 use function addcslashes;
 use function array_map;
 use function array_merge;
@@ -56,6 +55,7 @@ use function strpos;
 use function strtolower;
 use function strtoupper;
 use function trigger_error;
+use const E_USER_DEPRECATED;
 
 /**
  * Base class for all DatabasePlatforms. The DatabasePlatforms are the central
@@ -1553,7 +1553,6 @@ abstract class AbstractPlatform
 
         if (($createFlags & self::CREATE_INDEXES) > 0) {
             foreach ($table->getIndexes() as $index) {
-                /** @var $index Index */
                 if (! $index->isPrimary()) {
                     $options['indexes'][$index->getQuotedName($this)] = $index;
 
@@ -1806,6 +1805,7 @@ abstract class AbstractPlatform
             $referencesClause = ' REFERENCES ' . $constraint->getQuotedForeignTableName($this) .
                 ' (' . implode(', ', $constraint->getQuotedForeignColumns($this)) . ')';
         }
+
         $query .= ' ' . $columnList . $referencesClause;
 
         return $query;
@@ -1825,6 +1825,7 @@ abstract class AbstractPlatform
         if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         }
+
         $name    = $index->getQuotedName($this);
         $columns = $index->getColumns();
 
@@ -2093,6 +2094,7 @@ abstract class AbstractPlatform
             foreach ($diff->removedForeignKeys as $foreignKey) {
                 $sql[] = $this->getDropForeignKeySQL($foreignKey, $tableName);
             }
+
             foreach ($diff->changedForeignKeys as $foreignKey) {
                 $sql[] = $this->getDropForeignKeySQL($foreignKey, $tableName);
             }
@@ -2101,6 +2103,7 @@ abstract class AbstractPlatform
         foreach ($diff->removedIndexes as $index) {
             $sql[] = $this->getDropIndexSQL($index, $tableName);
         }
+
         foreach ($diff->changedIndexes as $index) {
             $sql[] = $this->getDropIndexSQL($index, $tableName);
         }
@@ -2528,6 +2531,7 @@ abstract class AbstractPlatform
         if ($this->supportsForeignKeyOnUpdate() && $foreignKey->hasOption('onUpdate')) {
             $query .= ' ON UPDATE ' . $this->getForeignKeyReferentialActionSQL($foreignKey->getOption('onUpdate'));
         }
+
         if ($foreignKey->hasOption('onDelete')) {
             $query .= ' ON DELETE ' . $this->getForeignKeyReferentialActionSQL($foreignKey->getOption('onDelete'));
         }
@@ -2554,6 +2558,7 @@ abstract class AbstractPlatform
             case 'RESTRICT':
             case 'SET DEFAULT':
                 return $upper;
+
             default:
                 throw new InvalidArgumentException('Invalid foreign key action: ' . $upper);
         }
@@ -2573,14 +2578,17 @@ abstract class AbstractPlatform
         if (strlen($foreignKey->getName()) > 0) {
             $sql .= 'CONSTRAINT ' . $foreignKey->getQuotedName($this) . ' ';
         }
+
         $sql .= 'FOREIGN KEY (';
 
         if (count($foreignKey->getLocalColumns()) === 0) {
             throw new InvalidArgumentException("Incomplete definition. 'local' required.");
         }
+
         if (count($foreignKey->getForeignColumns()) === 0) {
             throw new InvalidArgumentException("Incomplete definition. 'foreign' required.");
         }
+
         if (strlen($foreignKey->getForeignTableName()) === 0) {
             throw new InvalidArgumentException("Incomplete definition. 'foreignTable' required.");
         }
@@ -2757,12 +2765,16 @@ abstract class AbstractPlatform
         switch ($level) {
             case TransactionIsolationLevel::READ_UNCOMMITTED:
                 return 'READ UNCOMMITTED';
+
             case TransactionIsolationLevel::READ_COMMITTED:
                 return 'READ COMMITTED';
+
             case TransactionIsolationLevel::REPEATABLE_READ:
                 return 'REPEATABLE READ';
+
             case TransactionIsolationLevel::SERIALIZABLE:
                 return 'SERIALIZABLE';
+
             default:
                 throw new InvalidArgumentException('Invalid isolation level:' . $level);
         }
@@ -3208,6 +3220,16 @@ abstract class AbstractPlatform
      * @return bool
      */
     public function supportsForeignKeyConstraints()
+    {
+        return true;
+    }
+
+    /**
+     * Whether foreign key constraints can be dropped.
+     *
+     * If false, then getDropForeignKeySQL() throws exception.
+     */
+    public function supportsCreateDropForeignKeyConstraints() : bool
     {
         return true;
     }

@@ -5,7 +5,6 @@ namespace Doctrine\DBAL\Schema;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Visitor\Visitor;
 use Doctrine\DBAL\Types\Type;
-use const ARRAY_FILTER_USE_KEY;
 use function array_filter;
 use function array_keys;
 use function array_merge;
@@ -15,6 +14,7 @@ use function is_string;
 use function preg_match;
 use function strlen;
 use function strtolower;
+use const ARRAY_FILTER_USE_KEY;
 
 /**
  * Object Representation of a table.
@@ -284,7 +284,6 @@ class Table extends AbstractAsset
     public function columnsAreIndexed(array $columnNames)
     {
         foreach ($this->getIndexes() as $index) {
-            /** @var $index Index */
             if ($index->spansColumns($columnNames)) {
                 return true;
             }
@@ -954,9 +953,11 @@ class Table extends AbstractAsset
         foreach ($this->_columns as $k => $column) {
             $this->_columns[$k] = clone $column;
         }
+
         foreach ($this->_indexes as $k => $index) {
             $this->_indexes[$k] = clone $index;
         }
+
         foreach ($this->_fkConstraints as $k => $fk) {
             $this->_fkConstraints[$k] = clone $fk;
             $this->_fkConstraints[$k]->setLocalTable($this);
