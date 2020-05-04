@@ -301,7 +301,7 @@ class ExceptionTest extends FunctionalTestCase
         }
 
         // mode 0 is considered read-only on Windows
-        $mode = in_array(PHP_OS, ['Linux', 'Darwin']) ? 0444 : 0000;
+        $mode = PHP_OS_FAMILY !== 'Windows' ? 0444 : 0000;
 
         $filename = sprintf('%s/%s', sys_get_temp_dir(), 'doctrine_failed_connection_' . $mode . '.db');
 
