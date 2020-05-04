@@ -18,7 +18,6 @@ use function assert;
 use function chmod;
 use function exec;
 use function file_exists;
-use function in_array;
 use function posix_geteuid;
 use function posix_getpwuid;
 use function sprintf;
@@ -26,7 +25,7 @@ use function sys_get_temp_dir;
 use function touch;
 use function unlink;
 use function version_compare;
-use const PHP_OS;
+use const PHP_OS_FAMILY;
 
 class ExceptionTest extends FunctionalTestCase
 {

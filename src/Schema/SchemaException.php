@@ -150,7 +150,7 @@ class SchemaException extends DBALException
      * @param string $constraintName
      * @param string $table
      *
-     * @return \Doctrine\DBAL\Schema\SchemaException
+     * @return SchemaException
      */
     public static function uniqueConstraintDoesNotExist($constraintName, $table)
     {
