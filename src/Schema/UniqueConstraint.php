@@ -36,7 +36,6 @@ class UniqueConstraint extends AbstractAsset implements Constraint
     private $options = [];
 
     /**
-     * @param string   $name
      * @param string[] $columns
      * @param string[] $flags
      * @param mixed[]  $options
@@ -99,10 +98,6 @@ class UniqueConstraint extends AbstractAsset implements Constraint
     /**
      * Adds flag for a unique constraint that translates to platform specific handling.
      *
-     * @param string $flag
-     *
-     * @return self
-     *
      * @example $uniqueConstraint->addFlag('CLUSTERED')
      */
     public function addFlag(string $flag) : UniqueConstraint
@@ -114,10 +109,6 @@ class UniqueConstraint extends AbstractAsset implements Constraint
 
     /**
      * Does this unique constraint have a specific flag?
-     *
-     * @param string $flag
-     *
-     * @return bool
      */
     public function hasFlag(string $flag) : bool
     {
@@ -126,10 +117,6 @@ class UniqueConstraint extends AbstractAsset implements Constraint
 
     /**
      * Removes a flag.
-     *
-     * @param string $flag
-     *
-     * @return void
      */
     public function removeFlag(string $flag) : void
     {
@@ -137,9 +124,7 @@ class UniqueConstraint extends AbstractAsset implements Constraint
     }
 
     /**
-     * @param string $name
-     *
-     * @return bool
+     * Does this unique constraint have a specific option?
      */
     public function hasOption(string $name) : bool
     {
@@ -163,7 +148,7 @@ class UniqueConstraint extends AbstractAsset implements Constraint
     }
 
     /**
-     * @return void
+     * Adds a new column to the unique constraint.
      */
     protected function addColumn(string $column) : void
     {

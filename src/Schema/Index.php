@@ -72,8 +72,6 @@ class Index extends AbstractAsset implements Constraint
     }
 
     /**
-     * @return void
-     *
      * @throws InvalidArgumentException
      */
     protected function _addColumn(string $column) : void
