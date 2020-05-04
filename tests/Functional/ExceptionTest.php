@@ -425,7 +425,7 @@ EOT
 
     private function isLinuxRoot() : bool
     {
-        return PHP_OS === 'Linux' && posix_getpwuid(posix_geteuid())['name'] === 'root';
+        return PHP_OS_FAMILY !== 'Windows' && posix_getpwuid(posix_geteuid())['name'] === 'root';
     }
 
     private function cleanupReadOnlyFile(string $filename) : void
