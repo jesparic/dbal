@@ -31,7 +31,7 @@ class Table extends AbstractAsset
     protected $_primaryKeyName = null;
 
     /** @var UniqueConstraint[] */
-    protected $_uniqueConstraints = [];
+    protected $uniqueConstraints = [];
 
     /** @var ForeignKeyConstraint[] */
     protected $_fkConstraints = [];
@@ -149,7 +149,7 @@ class Table extends AbstractAsset
      *
      * @return self
      */
-    public function addUniqueConstraint(array $columnNames, ?string $indexName = null, array $flags = [], array $options = [])
+    public function addUniqueConstraint(array $columnNames, ?string $indexName = null, array $flags = [], array $options = []) : Table
     {
         if ($indexName === null) {
             $indexName = $this->_generateIdentifierName(
@@ -504,56 +504,44 @@ class Table extends AbstractAsset
 
     /**
      * Returns whether this table has a unique constraint with the given name.
-     *
-     * @param string $constraintName
-     *
-     * @return bool
      */
-    public function hasUniqueConstraint($constraintName)
+    public function hasUniqueConstraint(string $name) : bool
     {
-        $constraintName = $this->normalizeIdentifier($constraintName);
+        $name = $this->normalizeIdentifier($name);
 
-        return isset($this->_uniqueConstraints[$constraintName]);
+        return isset($this->uniqueConstraints[$name]);
     }
 
     /**
      * Returns the unique constraint with the given name.
      *
-     * @param string $constraintName The constraint name.
-     *
-     * @return UniqueConstraint
-     *
      * @throws SchemaException If the unique constraint does not exist.
      */
-    public function getUniqueConstraint($constraintName)
+    public function getUniqueConstraint(string $name) : UniqueConstraint
     {
-        $constraintName = $this->normalizeIdentifier($constraintName);
+        $name = $this->normalizeIdentifier($name);
 
-        if (! $this->hasUniqueConstraint($constraintName)) {
-            throw SchemaException::uniqueConstraintDoesNotExist($constraintName, $this->_name);
+        if (! $this->hasUniqueConstraint($name)) {
+            throw SchemaException::uniqueConstraintDoesNotExist($name, $this->_name);
         }
 
-        return $this->_uniqueConstraints[$constraintName];
+        return $this->uniqueConstraints[$name];
     }
 
     /**
      * Removes the unique constraint with the given name.
      *
-     * @param string $constraintName The constraint name.
-     *
-     * @return void
-     *
-     * @throws SchemaException
+     * @throws SchemaException If the unique constraint does not exist.
      */
-    public function removeUniqueConstraint($constraintName)
+    public function removeUniqueConstraint(string $name) : void
     {
-        $constraintName = $this->normalizeIdentifier($constraintName);
+        $name = $this->normalizeIdentifier($name);
 
-        if (! $this->hasForeignKey($constraintName)) {
-            throw SchemaException::uniqueConstraintDoesNotExist($constraintName, $this->_name);
+        if (! $this->hasForeignKey($name)) {
+            throw SchemaException::uniqueConstraintDoesNotExist($name, $this->_name);
         }
 
-        unset($this->_uniqueConstraints[$constraintName]);
+        unset($this->uniqueConstraints[$name]);
     }
 
     /**
@@ -711,7 +699,7 @@ class Table extends AbstractAsset
      */
     public function getUniqueConstraints()
     {
-        return $this->_uniqueConstraints;
+        return $this->uniqueConstraints;
     }
 
     /**
@@ -876,7 +864,7 @@ class Table extends AbstractAsset
     /**
      * @return self
      */
-    protected function _addUniqueConstraint(UniqueConstraint $constraint)
+    protected function _addUniqueConstraint(UniqueConstraint $constraint) : Table
     {
         $mergedNames = array_merge([$this->getName()], $constraint->getColumns());
         $name        = strlen($constraint->getName()) > 0
@@ -885,7 +873,7 @@ class Table extends AbstractAsset
 
         $name = $this->normalizeIdentifier($name);
 
-        $this->_uniqueConstraints[$name] = $constraint;
+        $this->uniqueConstraints[$name] = $constraint;
 
         // If there is already an index that fulfills this requirements drop the request. In the case of __construct
         // calling this method during hydration from schema-details all the explicitly added indexes lead to duplicates.
@@ -984,7 +972,7 @@ class Table extends AbstractAsset
      *
      * @throws SchemaException
      */
-    private function _createUniqueConstraint(array $columnNames, string $indexName, array $flags = [], array $options = [])
+    private function _createUniqueConstraint(array $columnNames, string $indexName, array $flags = [], array $options = []) : UniqueConstraint
     {
         if (preg_match('(([^a-zA-Z0-9_]+))', $this->normalizeIdentifier($indexName)) === 1) {
             throw SchemaException::indexNameInvalid($indexName);

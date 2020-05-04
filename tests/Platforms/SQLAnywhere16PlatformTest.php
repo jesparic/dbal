@@ -394,13 +394,13 @@ class SQLAnywhere16PlatformTest extends AbstractPlatformTestCase
             'CONSTRAINT unique_constraint UNIQUE CLUSTERED (a, b)',
             $this->platform->getUniqueConstraintDeclarationSQL(
                 'unique_constraint',
-                new UniqueConstraint(null, ['a', 'b'], ['clustered'])
+                new UniqueConstraint('unique_constraint', ['a', 'b'], ['clustered'])
             )
         );
 
         self::assertEquals(
-            'CONSTRAINT UNIQUE (a, b)',
-            $this->platform->getUniqueConstraintDeclarationSQL(null, new UniqueConstraint(null, ['a', 'b']))
+            'CONSTRAINT foo UNIQUE (a, b)',
+            $this->platform->getUniqueConstraintDeclarationSQL('foo', new UniqueConstraint('foo', ['a', 'b']))
         );
     }
 

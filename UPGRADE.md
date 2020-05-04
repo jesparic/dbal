@@ -1,5 +1,16 @@
 # Upgrade to 3.0
 
+## BC BREAK: Doctrine\DBAL\Schema\Table constructor new parameter
+
+Deprecated parameter `$idGeneratorType` removed and added a new parameter `$uniqueConstraints`.
+Constructor changed from:
+
+`__construct($tableName, array $columns = [], array $indexes = [], array $fkConstraints = [], $idGeneratorType = 0, array $options = [])`
+
+To the new constructor:
+
+`__construct($tableName, array $columns = [], array $indexes = [], array $uniqueConstraints = [], array $fkConstraints = [], array $options = [])`
+
 ## BC BREAK: Dropped support for `FetchMode::CUSTOM_OBJECT` and `::STANDARD_OBJECT`
 
 Instead of fetching an object, fetch an array and map it to an object of the desired class.

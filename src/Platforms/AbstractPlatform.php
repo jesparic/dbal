@@ -1565,7 +1565,6 @@ abstract class AbstractPlatform
             }
 
             foreach ($table->getUniqueConstraints() as $uniqueConstraint) {
-                /** @var UniqueConstraint $uniqueConstraint */
                 $options['uniqueConstraints'][$uniqueConstraint->getQuotedName($this)] = $uniqueConstraint;
             }
         }
@@ -1621,6 +1620,7 @@ abstract class AbstractPlatform
         }
 
         $sql = $this->_getCreateTableSQL($tableName, $columns, $options);
+
         if ($this->supportsCommentOnStatement()) {
             if ($table->hasOption('comment')) {
                 $sql[] = $this->getCommentOnTableSQL($tableName, $table->getOption('comment'));
@@ -1698,13 +1698,13 @@ abstract class AbstractPlatform
      *
      * @return string[]
      */
-    protected function _getCreateTableSQL($tableName, array $columns, array $options = [])
+    protected function _getCreateTableSQL($name, array $columns, array $options = [])
     {
         $columnListSql = $this->getColumnDeclarationListSQL($columns);
 
         if (isset($options['uniqueConstraints']) && ! empty($options['uniqueConstraints'])) {
-            foreach ($options['uniqueConstraints'] as $name => $definition) {
-                $columnListSql .= ', ' . $this->getUniqueConstraintDeclarationSQL($name, $definition);
+            foreach ($options['uniqueConstraints'] as $constraintName => $definition) {
+                $columnListSql .= ', ' . $this->getUniqueConstraintDeclarationSQL($constraintName, $definition);
             }
         }
 
@@ -1718,19 +1718,20 @@ abstract class AbstractPlatform
             }
         }
 
-        $query = 'CREATE TABLE ' . $tableName . ' (' . $columnListSql;
-
+        $query = 'CREATE TABLE ' . $name . ' (' . $columnListSql;
         $check = $this->getCheckDeclarationSQL($columns);
+
         if (! empty($check)) {
             $query .= ', ' . $check;
         }
+
         $query .= ')';
 
         $sql = [$query];
 
         if (isset($options['foreignKeys'])) {
             foreach ((array) $options['foreignKeys'] as $definition) {
-                $sql[] = $this->getCreateForeignKeySQL($definition, $tableName);
+                $sql[] = $this->getCreateForeignKeySQL($definition, $name);
             }
         }
 
@@ -2393,17 +2394,11 @@ abstract class AbstractPlatform
             throw new InvalidArgumentException("Incomplete definition. 'columns' required.");
         }
 
-        $flags = ['UNIQUE'];
-
-        if ($constraint->hasFlag('clustered')) {
-            $flags[] = 'CLUSTERED';
-        }
-
+        $constraintFlags = array_merge(['UNIQUE'], array_map('strtoupper', $constraint->getFlags()));
         $constraintName  = $name->getQuotedName($this);
-        $constraintName  = ! empty($constraintName) ? $constraintName . ' ' : '';
         $columnListNames = $this->getIndexFieldDeclarationListSQL($columns);
 
-        return sprintf('CONSTRAINT %s%s (%s)', $constraintName, implode(' ', $flags), $columnListNames);
+        return sprintf('CONSTRAINT %s %s (%s)', $constraintName, implode(' ', $constraintFlags), $columnListNames);
     }
 
     /**
@@ -3099,13 +3094,8 @@ abstract class AbstractPlatform
 
     /**
      * Gets the sequence name prefix based on table information.
-     *
-     * @param string      $tableName
-     * @param string|null $schemaName
-     *
-     * @return string
      */
-    public function getSequencePrefix($tableName, $schemaName = null)
+    public function getSequencePrefix(string $tableName, ?string $schemaName = null) : string
     {
         if ($schemaName === null) {
             return $tableName;
