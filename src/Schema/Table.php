@@ -968,8 +968,6 @@ class Table extends AbstractAsset
      * @param string[] $flags
      * @param mixed[]  $options
      *
-     * @return UniqueConstraint
-     *
      * @throws SchemaException
      */
     private function _createUniqueConstraint(array $columnNames, string $indexName, array $flags = [], array $options = []) : UniqueConstraint
