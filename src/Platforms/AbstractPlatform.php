@@ -1692,7 +1692,7 @@ abstract class AbstractPlatform
     /**
      * Returns the SQL used to create a table.
      *
-     * @param string    $tableName
+     * @param string    $name
      * @param mixed[][] $columns
      * @param mixed[]   $options
      *
