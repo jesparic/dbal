@@ -48,7 +48,6 @@ class Table extends AbstractAsset
     private $implicitIndexes = [];
 
     /**
-     * @param string                 $tableName
      * @param Column[]               $columns
      * @param Index[]                $indexes
      * @param UniqueConstraint[]     $uniqueConstraints
@@ -58,18 +57,18 @@ class Table extends AbstractAsset
      * @throws DBALException
      */
     public function __construct(
-        $tableName,
+        string $name,
         array $columns = [],
         array $indexes = [],
         array $uniqueConstraints = [],
         array $fkConstraints = [],
         array $options = []
     ) {
-        if (strlen($tableName) === 0) {
-            throw DBALException::invalidTableName($tableName);
+        if ($name === '') {
+            throw DBALException::invalidTableName($name);
         }
 
-        $this->_setName($tableName);
+        $this->_setName($name);
 
         foreach ($columns as $column) {
             $this->_addColumn($column);
