@@ -696,7 +696,7 @@ class Table extends AbstractAsset
      *
      * @return UniqueConstraint[]
      */
-    public function getUniqueConstraints()
+    public function getUniqueConstraints() : array
     {
         return $this->uniqueConstraints;
     }
