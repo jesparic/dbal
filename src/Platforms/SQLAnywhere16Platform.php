@@ -1292,21 +1292,21 @@ SQL
     /**
      * {@inheritdoc}
      */
-    protected function _getCreateTableSQL($tableName, array $columns, array $options = [])
+    protected function _getCreateTableSQL($name, array $columns, array $options = [])
     {
         $columnListSql = $this->getColumnDeclarationListSQL($columns);
         $indexSql      = [];
 
         if (! empty($options['uniqueConstraints'])) {
-            foreach ((array) $options['uniqueConstraints'] as $name => $definition) {
-                $columnListSql .= ', ' . $this->getUniqueConstraintDeclarationSQL($name, $definition);
+            foreach ((array) $options['uniqueConstraints'] as $constraintName => $definition) {
+                $columnListSql .= ', ' . $this->getUniqueConstraintDeclarationSQL($constraintName, $definition);
             }
         }
 
         if (! empty($options['indexes'])) {
             /** @var Index $index */
             foreach ((array) $options['indexes'] as $index) {
-                $indexSql[] = $this->getCreateIndexSQL($index, $tableName);
+                $indexSql[] = $this->getCreateIndexSQL($index, $name);
             }
         }
 
@@ -1326,7 +1326,7 @@ SQL
             }
         }
 
-        $query = 'CREATE TABLE ' . $tableName . ' (' . $columnListSql;
+        $query = 'CREATE TABLE ' . $name . ' (' . $columnListSql;
         $check = $this->getCheckDeclarationSQL($columns);
 
         if (! empty($check)) {

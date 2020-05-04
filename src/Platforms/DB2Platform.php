@@ -489,18 +489,20 @@ class DB2Platform extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    protected function _getCreateTableSQL($tableName, array $columns, array $options = [])
+    protected function _getCreateTableSQL($name, array $columns, array $options = [])
     {
         $indexes = [];
+
         if (isset($options['indexes'])) {
             $indexes = $options['indexes'];
         }
+
         $options['indexes'] = [];
 
-        $sqls = parent::_getCreateTableSQL($tableName, $columns, $options);
+        $sqls = parent::_getCreateTableSQL($name, $columns, $options);
 
         foreach ($indexes as $definition) {
-            $sqls[] = $this->getCreateIndexSQL($definition, $tableName);
+            $sqls[] = $this->getCreateIndexSQL($definition, $name);
         }
 
         return $sqls;
