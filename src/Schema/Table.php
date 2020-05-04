@@ -732,6 +732,36 @@ class Table extends AbstractAsset
     }
 
     /**
+     * Returns the foreign key columns
+     *
+     * @return Column[]
+     */
+    public function getForeignKeyColumns()
+    {
+        $foreignKeyColumns = [];
+
+        foreach ($this->getForeignKeys() as $foreignKey) {
+            $foreignKeyColumns = array_merge($foreignKeyColumns, $foreignKey->getLocalColumns());
+        }
+
+        return $this->filterColumns($foreignKeyColumns);
+    }
+
+    /**
+     * Returns only columns that have specified names
+     *
+     * @param string[] $columnNames
+     *
+     * @return Column[]
+     */
+    private function filterColumns(array $columnNames, bool $reverse = false) : array
+    {
+        return array_filter($this->_columns, static function ($columnName) use ($columnNames, $reverse) : bool {
+            return in_array($columnName, $columnNames, true) !== $reverse;
+        }, ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
      * Returns whether this table has a Column with the given name.
      *
      * @param string $columnName The column name.
@@ -793,22 +823,6 @@ class Table extends AbstractAsset
         }
 
         return $this->filterColumns($primaryKey->getColumns());
-    }
-
-    /**
-     * Returns the foreign key columns
-     *
-     * @return Column[]
-     */
-    public function getForeignKeyColumns()
-    {
-        $foreignKeyColumns = [];
-
-        foreach ($this->getForeignKeys() as $foreignKey) {
-            $foreignKeyColumns = array_merge($foreignKeyColumns, $foreignKey->getLocalColumns());
-        }
-
-        return $this->filterColumns($foreignKeyColumns);
     }
 
     /**
@@ -1002,19 +1016,5 @@ class Table extends AbstractAsset
         }
 
         return $this->trimQuotes(strtolower($identifier));
-    }
-
-    /**
-     * Returns only columns that have specified names
-     *
-     * @param string[] $columnNames
-     *
-     * @return Column[]
-     */
-    private function filterColumns(array $columnNames, bool $reverse = false) : array
-    {
-        return array_filter($this->_columns, static function ($columnName) use ($columnNames, $reverse) : bool {
-            return in_array($columnName, $columnNames, true) !== $reverse;
-        }, ARRAY_FILTER_USE_KEY);
     }
 }
