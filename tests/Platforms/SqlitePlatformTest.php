@@ -827,6 +827,6 @@ class SqlitePlatformTest extends AbstractPlatformTestCase
 
     public function testGetSequencePrefixWithSchema() : void
     {
-        self::assertEquals("bar__foo", $this->platform->getSequencePrefix("foo", "bar"));
+        self::assertEquals('bar__foo', $this->platform->getSequencePrefix('foo', 'bar'));
     }
 }
