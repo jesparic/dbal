@@ -155,7 +155,7 @@ class SchemaException extends DBALException
     public static function uniqueConstraintDoesNotExist($constraintName, $table)
     {
         return new self(
-            sprintf("There exists no unique constraint with the name '%s' on table '%s'.", $constraintName, $table),
+            sprintf('There exists no unique constraint with the name "%s" on table "%s".', $constraintName, $table),
             self::CONSTRAINT_DOESNT_EXIST
         );
     }
