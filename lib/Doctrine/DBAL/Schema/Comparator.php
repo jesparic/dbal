@@ -431,7 +431,7 @@ class Comparator
         // When doing migration diffs, there is no need to flag the column as different (unless options differ too)
         $typeClass1 = get_class($properties1['type']);
         $typeClass2 = get_class($properties2['type']);
-        if ($typeClass1 !== $typeClass2 && ! $this->isStringParentOf($typeClass1, $typeClass2)) {
+        if ($typeClass1 !== $typeClass2 && ! $this->relatedStringTypes($typeClass1, $typeClass2)) {
             $changedProperties[] = 'type';
         }
 
@@ -513,13 +513,13 @@ class Comparator
         return array_unique($changedProperties);
     }
 
-    private function isStringParentOf(string $type1, string $type2) : bool
+    private function relatedStringTypes(string $type1, string $type2) : bool
     {
-        if ($type1 !== Types\StringType::class) {
+        if ($type1 !== Types\StringType::class && $type2 !== Types\StringType::class) {
             return false;
         }
 
-        return is_a($type2, $type1, true);
+        return is_a($type2, $type1, true) || is_a($type1, $type2, true);
     }
 
     /**
